@@ -1,6 +1,8 @@
 # Express-Route-Builder
 Quickly compile Express.js routes with minimal code.
 
+**NOTE: Requires Node.js v6.x**
+
 ## Quick Use
 
 #### index.js
