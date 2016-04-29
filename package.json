@@ -1,0 +1,46 @@
+{
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saikojosh/Express-Route-Builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/saikojosh/Express-Route-Builder/issues"
+  },
+  "name": "express-route-builder",
+  "version": "0.0.1",
+  "description": "Quickly compile Express.js routes with minimal code.",
+  "keywords": [
+    "express",
+    "express.js",
+    "route",
+    "routes",
+    "routing",
+    "builder",
+    "config",
+    "middleware"
+  ],
+  "main": "index.js",
+  "author": "Josh Cole <saikojosh@gmail.com> (http://www.JoshuaCole.me)",
+  "contributors": [
+    {
+      "name": "Josh Cole",
+      "email": "saikojosh@gmail.com"
+    }
+  ],
+  "devDependencies": {
+    "eslint": "2.8.x",
+    "eslint-config-airbnb": "8.0.x",
+    "eslint-config-settled": "latest",
+    "eslint-plugin-babel": "3.2.x",
+    "eslint-plugin-import": "1.6.x",
+    "eslint-plugin-jsx-a11y": "1.0.x",
+    "eslint-plugin-react": "5.0.x"
+  },
+  "dependencies": {
+
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "5.x"
+  }
+}
