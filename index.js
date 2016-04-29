@@ -31,6 +31,7 @@ const httpMethods = [
   'unsubscribe',
   'patch',
   'search',
+  'connect',
 ];
 
 module.exports = class ExpressRouteBuilder {
