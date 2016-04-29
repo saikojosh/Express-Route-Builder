@@ -7,7 +7,7 @@
     "url": "https://github.com/saikojosh/Express-Route-Builder/issues"
   },
   "name": "express-route-builder",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Quickly compile Express.js routes with minimal code.",
   "keywords": [
     "express",
