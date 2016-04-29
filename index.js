@@ -2,6 +2,7 @@
 
 /*
  * EXPRESS ROUTE BUILDER
+ * Quickly compile Express.js routes with minimal code.
  */
 
 const pathify = require('path').join;
@@ -50,7 +51,7 @@ module.exports = class ExpressRouteBuilder {
   }
 
   /*
-   * Adds a route ready for compiling.
+   * Adds a route to the Express app.
    */
   addRoute (path, filename, _middleware) {
 
