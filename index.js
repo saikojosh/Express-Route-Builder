@@ -53,9 +53,9 @@ module.exports = class ExpressRouteBuilder {
   /*
    * Adds a route to the Express app.
    */
-  addRoute (path, filename, _middleware) {
+  addRoute (path, filename, _middleware = []) {
 
-    const middleware = (Array.isArray(_middleware || []) ? _middleware : [_middleware]);
+    let middleware = _middleware || [];
     let fullPath;
     let module;
 
@@ -76,7 +76,8 @@ module.exports = class ExpressRouteBuilder {
     const router = this.express.Router();
     const route = router.route(path);
 
-    // Add middleware, if any.
+    // Add middleware, if any. Middleware must be an array.
+    middleware = (Array.isArray(middleware) ? middleware : [middleware]);
     for (let m = 0, mlen = middleware.length; m < mlen; m++) {
       const middlewareFn = middleware[m];
 
