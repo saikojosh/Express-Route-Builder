@@ -45,6 +45,8 @@ module.exports = class ExpressRouteBuilder {
     this.app = _app;
     this.baseDir = _baseDir || process.cwd();
 
+    this.routes = [];
+
   }
 
   /*
@@ -57,7 +59,7 @@ module.exports = class ExpressRouteBuilder {
     let module;
 
     // Check we don't already have a route for this path.
-    if (this.routes.find(element => element.path === path)) {
+    if (this.routes.find(element => element === path)) {
       throw new Error(`A route already exists for "${path}".`);
     }
 
@@ -96,6 +98,9 @@ module.exports = class ExpressRouteBuilder {
 
     // Finally, mount the route.
     this.app.use(path, router);
+
+    // Remember that we have mounted a route on this path.
+    this.routes.push(path);
 
     return this;
 
