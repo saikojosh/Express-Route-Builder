@@ -46,7 +46,7 @@ module.exports = class ExpressRouteBuilder {
     this.app = _app;
     this.baseDir = _baseDir || process.cwd();
 
-    this.routes = [];
+    this.routes = {};
 
   }
 
@@ -56,36 +56,27 @@ module.exports = class ExpressRouteBuilder {
   addRoute (path, filename, _middleware = []) {
 
     let middleware = _middleware || [];
-    let fullPath;
+    let fullFilename;
     let module;
-
-    // Check we don't already have a route for this path.
-    if (this.routes.find(element => element === path)) {
-      throw new Error(`A route already exists for "${path}".`);
-    }
 
     // Attempt to load in the module.
     try {
-      fullPath = pathify(this.baseDir, filename);
-      module = require(fullPath);
+      fullFilename = pathify(this.baseDir, filename);
+      module = require(fullFilename);
     } catch (err) {
-      throw new Error(`Unable to load module "${fullPath}" (${err.code || err.name}).`);
+      throw new Error(`Unable to load module "${fullFilename}" (${err.code || err.name}).`);
     }
 
-    // Create a new router instance.
-    const router = this.express.Router();
-    const route = router.route(path);
-
-    // Add middleware, if any. Middleware must be an array.
+    // Check each of the middleware methods.
     middleware = (Array.isArray(middleware) ? middleware : [middleware]);
     for (let m = 0, mlen = middleware.length; m < mlen; m++) {
       const middlewareFn = middleware[m];
 
       if (typeof middlewareFn !== 'function') {
-        throw new Error(`Middleware for path "${path}" at index ${m} should be a function and not "${typeof middlewareFn}"!`);
-      }
+        const type = typeof middlewareFn;
 
-      router.use(middlewareFn);
+        throw new Error(`Middleware for path "${path}" at index ${m} should be a function and not "${type}"!`);
+      }
     }
 
     // Apply the module's handler functions that are present for any of the supported HTTP methods.
@@ -93,16 +84,27 @@ module.exports = class ExpressRouteBuilder {
       const httpMethod = httpMethods[v];
       const handler = module[httpMethod];
 
+      // Handler is not a function.
       if (typeof handler !== 'function') { continue; }
 
-      route[httpMethod](handler);
+      // Check if we already have a handler mounted on this path and HTTP method.
+      if (this.routes[path] && this.routes[path][httpMethod]) {
+        throw new Error(`A ${httpMethod.toUpperCase()} route already exists for the path "${path}".`);
+      }
+
+      // Mount route with middleware.
+      if (middleware && middleware.length) {
+        this.app[httpMethod](path, middleware, handler);
+
+      // Mount route without middleware.
+      } else {
+        this.app[httpMethod](path, handler);
+      }
+
+      // Remember that we've mounted on this path and HTTP method to prevent double mounting.
+      if (!this.routes[path]) { this.routes[path] = {}; }
+      this.routes[path][httpMethod] = true;
     }
-
-    // Finally, mount the route.
-    this.app.use(path, router);
-
-    // Remember that we have mounted a route on this path.
-    this.routes.push(path);
 
     return this;
 
