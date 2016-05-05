@@ -53,18 +53,24 @@ module.exports = class ExpressRouteBuilder {
   /*
    * Adds a route to the Express app.
    */
-  addRoute (path, filename, _middleware = []) {
+  addRoute (path, input, _middleware = []) {
 
     let middleware = _middleware || [];
     let fullFilename;
     let module;
 
-    // Attempt to load in the module.
-    try {
-      fullFilename = pathify(this.baseDir, filename);
-      module = require(fullFilename);
-    } catch (err) {
-      throw new Error(`Unable to load module "${fullFilename}" (${err.code || err.name}).`);
+    // Attempt to load in the module if a filename is given.
+    if (typeof input === 'string') {
+      try {
+        fullFilename = pathify(this.baseDir, input);
+        module = require(fullFilename);
+      } catch (err) {
+        throw new Error(`Unable to load module "${fullFilename}" (${err.code || err.name}).`);
+      }
+
+    // Otherwise assume the input is an object.
+    } else {
+      module = input;
     }
 
     // Check each of the middleware methods.
