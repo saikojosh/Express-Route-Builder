@@ -38,6 +38,8 @@ In each of the route modules you should specify functions named after the HTTP m
 
 _`get, post, put, head, delete, options, trace, copy, lock, mkcol, move, purge, propfind, proppatch, unlock, report, mkactivity, checkout, merge, m-search, notify, subscribe, unsubscribe, patch, search, connect`_
 
+**Note:** The function names must be lowercase.
+
 ```javascript
 module.exports.get = function (req, res, next) { ... };
 module.exports.post = function (req, res, next) { ... };
