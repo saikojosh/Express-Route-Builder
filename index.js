@@ -51,6 +51,19 @@ module.exports = class ExpressRouteBuilder {
   }
 
   /*
+   * Adds a static directory to the express app.
+   */
+  addStatic (dir, mountPath = null) {
+
+    if (mountPath) {
+      this.app.use(this.express.static(mountPath, dir));
+    } else {
+      this.app.use(this.express.static(dir));
+    }
+
+  }
+
+  /*
    * Adds a route to the Express app.
    */
   addRoute (path, input, _middleware = []) {
