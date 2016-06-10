@@ -4,6 +4,7 @@ Quickly compile Express.js routes with minimal code.
 **NOTE: Requires Node.js v6.x**
 
 ## Quick Use
+The following example will help you get up and running quickly but you can also take a look at the API reference further down which contains more options.
 
 #### index.js
 Setup your Express app as usual. It's a good idea to create a separate module to handle the building of your routes so as to keep your `index.js` minimal.
@@ -28,8 +29,16 @@ module.exports.setup = function (app) {
   const baseDir = path.join(__dirname, 'controllers/');
   const builder = new ExpressRouteBuilder(express, app, baseDir);
 
+  // You can specify the name of the controller files for each path.
   builder.addRoute('/comments', 'comments');
   builder.addRoute('/users', 'users');
+
+  // Or you can explicitly define functions for each route and method.
+  builder.addRoute('/other/data', {
+    get: (req, res, next) => { ... },
+    post: (req, res, next) => { ... },
+    ...
+  })
 };
 ```
 
@@ -66,8 +75,8 @@ Serving up static files is very easy and uses the same arguments as `express.sta
 #### new ExpressRouteBuilder(express, app, baseDir = process.cwd());
 Creates a new instance of the builder. The base directory is optional and defaults to the current working directory of your app.
 
-#### .addRoute(path, filename, middleware = []);
-Adds a route to your Express app based on the path given; you can specify any path that Express accepts. The filename should be the name of the module which will handle this route, relative to the base path given in the constructor. Also, you can optionally specify an array of middleware functions to use before the route is processed.
+#### .addRoute(path, input, middleware = []);
+Adds a route to your Express app based on the path given; you can specify any path that Express accepts. The `input` parameter should be either a filename of the module which will handle this route (relative to the base directory given in the constructor) or an object containing functions with keys based on the HTTP methods supported by express. Also, you can optionally specify an array of middleware functions to use before the route is processed.
 
-#### .addStatic(dir, prefix = null);
-Adds a directory to your express app where static files will be served up from. The directory will be relative to the current working directory of your app so it's a good idea to specify an absolute path. The prefix parameter is optional and will be prepended to the file path in the URL, just like with express.static().
+#### .addStatic(dir, prefix = null, middleware = [], options = {});
+Adds a directory to your express app where static files will be served up from. The directory will be relative to the current working directory of your app so it's a good idea to specify an absolute path. The prefix parameter is optional and will be prepended to the file path in the URL, just like with express.static(). Also, you can optionally specify an array of middleware functions to use before any files in the static directory are served up. The `options` parameter is the same as `express.static()`.
