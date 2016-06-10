@@ -47,6 +47,20 @@ module.exports.post = function (req, res, next) { ... };
 
 ```
 
+## Static Files
+Serving up static files is very easy and uses the same arguments as `express.static()` except with the arguments reversed. To specify multiple static directories call the `.addStatic()` method multiple times. Files will be looked up in the order the directories are specified.
+
+```javascript
+  // Adds a directory from which express will serve up your static files.
+  // For "photo.jpg" the resulting URL will be "http://www.example.com/photo.jpg"
+  // and the file will be served up from the directory specified.
+  builder.addStatic('/path/to/static/directory');
+
+  // You can also specify a prefix to use in the URL as the second parameter.
+  // This time "photo.jpg" will have a URL of "http://www.example.com/images/photos/photo.jpg"
+  builder.addStatic('/path/to/static/directory', 'images/photos');
+```
+
 ## API
 
 #### new ExpressRouteBuilder(express, app, baseDir = process.cwd());
@@ -54,3 +68,6 @@ Creates a new instance of the builder. The base directory is optional and defaul
 
 #### .addRoute(path, filename, middleware = []);
 Adds a route to your Express app based on the path given; you can specify any path that Express accepts. The filename should be the name of the module which will handle this route, relative to the base path given in the constructor. Also, you can optionally specify an array of middleware functions to use before the route is processed.
+
+#### .addStatic(dir, prefix = null);
+Adds a directory to your express app where static files will be served up from. The directory will be relative to the `baseDir` specified in the constructor. The prefix parameter is optional and will be prepended to the file path in the URL, just like with express.static().
