@@ -65,7 +65,7 @@ module.exports = class ExpressRouteBuilder {
 
     // Build the arguments to pass to app.use().
     if (prefix) { args.push(prefix); }
-    if (middleware && middleware.length) { args.push(middleware); }
+    if (middleware && middleware.length) { args.concat(middleware); }
     args.push(this.express.static(dir, options));
 
     this.app.use.apply(null, args);
