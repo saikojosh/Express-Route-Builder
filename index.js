@@ -53,13 +53,22 @@ module.exports = class ExpressRouteBuilder {
   /*
    * Adds a static directory to the express app.
    */
-  addStatic (dir, mountPath = null) {
+  addStatic (dir, prefix = null, _middleware = [], options = {}) {
 
-    if (mountPath) {
-      this.app.use(this.express.static(mountPath, dir));
-    } else {
-      this.app.use(this.express.static(dir));
+    const middleware = this.prepareMiddlewareArray(_middleware);
+    const args = [];
+    const { mResult, mIndex, mType } = this.checkMiddlewareMethods(middleware);
+
+    if (!mResult) {
+      throw new Error(`Middleware for static directory "${dir}" at index ${mIndex} should be a function and not "${mType}"!`);
     }
+
+    // Build the arguments to pass to app.use().
+    if (prefix) { args.push(prefix); }
+    if (middleware && middleware.length) { args.push(middleware); }
+    args.push(this.express.static(dir, options));
+
+    this.app.use.apply(null, args);
 
   }
 
@@ -68,7 +77,7 @@ module.exports = class ExpressRouteBuilder {
    */
   addRoute (path, input, _middleware = []) {
 
-    let middleware = _middleware || [];
+    const middleware = this.prepareMiddlewareArray(_middleware);
     let fullFilename;
     let module;
 
@@ -87,15 +96,10 @@ module.exports = class ExpressRouteBuilder {
     }
 
     // Check each of the middleware methods.
-    middleware = (Array.isArray(middleware) ? middleware : [middleware]);
-    for (let m = 0, mlen = middleware.length; m < mlen; m++) {
-      const middlewareFn = middleware[m];
+    const { mResult, mIndex, mType } = this.checkMiddlewareMethods(middleware);
 
-      if (typeof middlewareFn !== 'function') {
-        const type = typeof middlewareFn;
-
-        throw new Error(`Middleware for path "${path}" at index ${m} should be a function and not "${type}"!`);
-      }
+    if (!mResult) {
+      throw new Error(`Middleware for path "${path}" at index ${mIndex} should be a function and not "${mType}"!`);
     }
 
     // Apply the module's handler functions that are present for any of the supported HTTP methods.
@@ -126,6 +130,35 @@ module.exports = class ExpressRouteBuilder {
     }
 
     return this;
+
+  }
+
+  /*
+   * Ensures the middleware is an array.
+   */
+  prepareMiddlewareArray (middlewareList) {
+    if (!middlewareList) { return []; }
+    return (Array.isArray(middlewareList) ? middlewareList : [middlewareList]);
+  }
+
+  /*
+   * Ensure all middlewares are valid.
+   */
+  checkMiddlewareMethods (middlewareList) {
+
+    // Check each function in turn.
+    for (let index = 0, ilen = middlewareList.length; index < ilen; index++) {
+      const middlewareFn = middlewareList[index];
+
+      if (typeof middlewareFn !== 'function') {
+        const type = typeof middlewareFn;
+
+        return { mResult: false, index, type };
+      }
+    }
+
+    // All OK!
+    return { mResult: true };
 
   }
 
