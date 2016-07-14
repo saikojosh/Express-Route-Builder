@@ -60,7 +60,9 @@ module.exports = class ExpressRouteBuilder {
     const { mResult, mIndex, mType } = this.checkMiddlewareMethods(middleware);
 
     if (!mResult) {
-      throw new Error(`Middleware for static directory "${dir}" at index ${mIndex} should be a function and not "${mType}"!`);
+      throw new Error(
+        `Middleware for static directory "${dir}" at index ${mIndex} should be a function and not "${mType}"!`
+      );
     }
 
     // Build the arguments to pass to app.use().
