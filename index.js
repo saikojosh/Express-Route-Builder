@@ -70,7 +70,7 @@ module.exports = class ExpressRouteBuilder {
     if (middleware && middleware.length) { args.concat(middleware); }
     args.push(this.express.static(dir, options));
 
-    this.app.use.apply(null, args);
+    this.app.use(...args);
 
   }
 
